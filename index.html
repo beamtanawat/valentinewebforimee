@@ -30,15 +30,13 @@ body{
   box-shadow:8px 8px 0 #ff4d88;
 }
 
-h1{font-size:14px;line-height:1.8;margin-bottom:10px;}
+h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
 p{font-size:11px;line-height:1.8;}
 
 .envelopes{
   display:flex;
   justify-content:space-between;
   margin-top:25px;
-  flex-wrap:wrap;
-  gap:10px;
 }
 
 .envelope{
@@ -126,18 +124,13 @@ button{
     Beam ❤️ Imee
   </h1>
 
-  <!-- ✅ วันที่สำคัญ -->
-  <p style="margin-top:10px;">Since 14 Feb 2024</p>
-
+  <p style="margin-top:10px;">27 Dec 2025</p>
+  
   <p>PICK AN ENVELOPE</p>
-
   <div class="envelopes">
     <div class="envelope" onclick="openText(this)">💌</div>
     <div class="envelope" onclick="openGallery(this)">💌</div>
     <div class="envelope" onclick="openMessage(this)">💌</div>
-
-    <!-- ✅ ซองลับ -->
-    <div class="envelope" onclick="openSecret(this)">💝</div>
   </div>
 </div>
 
@@ -180,15 +173,6 @@ button{
     <button onclick="showGameClear()">YES</button>
     <button onclick="showGameClear()">YES</button>
   </div>
-</div>
-
-<!-- ✅ ENVELOPE 4 : SECRET -->
-<div class="screen" id="secretScreen">
-  <p style="margin-top:30px;">
-    No matter what happens,<br>
-    I’m here.
-  </p>
-  <button onclick="goBack()">BACK</button>
 </div>
 
 <!-- GAME CLEAR -->
@@ -257,5 +241,24 @@ function openMessage(el){
   typeEffect(longText,text3);
 }
 
-/* ✅ ซองลับ */
-fu
+function showGameClear(){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  clearScreen.style.display="block";
+  spawnHearts();
+}
+
+function spawnHearts(){
+  hearts.innerHTML="";
+  for(let i=0;i<25;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDelay=Math.random()*2+"s";
+    hearts.appendChild(h);
+  }
+}
+</script>
+
+</body>
+</html>

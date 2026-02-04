@@ -28,7 +28,6 @@ body{
   padding:25px 20px 30px;
   text-align:center;
   box-shadow:8px 8px 0 #ff4d88;
-  position:relative;
 }
 
 h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
@@ -55,7 +54,6 @@ p{font-size:11px;line-height:1.8;}
 .envelope.open{
   transform:scale(1.2) rotate(-2deg);
 }
-.envelope span{font-size:26px;}
 
 @keyframes shake{
   0%,100%{transform:translateX(0);}
@@ -111,24 +109,12 @@ button{
 @keyframes floatUp{
   to{transform:translateY(-120vh);opacity:0;}
 }
-
-/* 🔊 Sound Toggle */
-.sound-btn{
-  position:absolute;
-  top:10px;
-  right:10px;
-  font-size:16px;
-  cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
 <div class="game-screen">
-
-<!-- SOUND BUTTON -->
-<div class="sound-btn" onclick="toggleSound()">🔊</div>
 
 <!-- HOME -->
 <div id="home">
@@ -139,40 +125,40 @@ button{
   </h1>
   <p>PICK AN ENVELOPE</p>
   <div class="envelopes">
-    <div class="envelope" onclick="openText(this)"><span>💌</span></div>
-    <div class="envelope" onclick="openGallery(this)"><span>💌</span></div>
-    <div class="envelope" onclick="openMessage(this)"><span>💌</span></div>
+    <div class="envelope" onclick="openText(this)">💌</div>
+    <div class="envelope" onclick="openGallery(this)">💌</div>
+    <div class="envelope" onclick="openMessage(this)">💌</div>
   </div>
 </div>
 
 <!-- ENVELOPE 1 -->
 <div class="screen" id="textScreen">
   <p id="typeText"></p>
-  <button onclick="playPop(); goBack()">BACK</button>
+  <button onclick="goBack()">BACK</button>
 </div>
 
 <!-- ENVELOPE 2 -->
 <div class="screen" id="galleryScreen">
   <p>OUR MEMORIES</p>
+
   <div class="slider">
-    <img src="img1.jpg" class="slide">
-    <img src="img2.jpg" class="slide">
-    <img src="img3.jpg" class="slide">
-    <img src="img4.jpg" class="slide">
-    <img src="img5.jpg" class="slide">
-    <img src="img6.jpg" class="slide">
-    <img src="img7.jpg" class="slide">
-    <img src="img8.jpg" class="slide">
-    <img src="img9.jpg" class="slide">
-    <img src="img10.jpg" class="slide">
-    <img src="img11.jpg" class="slide">
-    <img src="img12.jpg" class="slide">
+    <img src="img1.jpg.jpg" class="slide">
+    <img src="img2.jpg.jpg" class="slide">
+    <img src="img3.jpg.jpg" class="slide">
+    <img src="img4.jpg.jpg" class="slide">
+    <img src="img5.jpg.jpg" class="slide">
+    <img src="img6.jpg.jpg" class="slide">
+    <img src="img10.jpg.jpg" class="slide">
+    <img src="img11.jpg.jpg" class="slide">
+    <img src="img12.jpg.jpg" class="slide">
   </div>
+
   <div class="answers">
     <button onclick="prevSlide()">◀</button>
     <button onclick="nextSlide()">▶</button>
   </div>
-  <button onclick="playPop(); goBack()">BACK</button>
+
+  <button onclick="goBack()">BACK</button>
 </div>
 
 <!-- ENVELOPE 3 -->
@@ -189,21 +175,14 @@ button{
 <div class="screen" id="clearScreen">
   <h1>💖 GAME CLEAR 💖</h1>
   <p>YOU UNLOCKED<br>MY HEART</p>
-  <button onclick="playPop(); goBack()">PLAY AGAIN</button>
+  <button onclick="goBack()">PLAY AGAIN</button>
 </div>
 
 </div>
 
 <div class="hearts" id="hearts"></div>
 
-<!-- AUDIO -->
-<audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3"></audio>
-<audio id="bgm" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-177.mp3" loop preload="auto"></audio>
-
 <script>
-let musicStarted=false;
-let muted=false;
-
 const text1="HAPPY\nVALENTINE’S DAY\nIMEE 💖";
 const text3="IMEE,\n\nThank you for every smile,\nevery moment,\nand every memory.\n\nI love you so much.\n\n– Beam 💖";
 
@@ -217,31 +196,6 @@ function typeEffect(el,text,speed=45){
   },speed);
 }
 
-function playPop(){
-  if(muted) return;
-  const p=document.getElementById("popSound");
-  p.currentTime=0;
-  p.play();
-}
-
-function playBGM(){
-  if(musicStarted || muted) return;
-  const bgm=document.getElementById("bgm");
-  bgm.volume=0.8;
-  bgm.play().then(()=>musicStarted=true);
-}
-
-function toggleSound(){
-  muted=!muted;
-  const bgm=document.getElementById("bgm");
-  document.querySelector(".sound-btn").innerText=muted?"🔇":"🔊";
-  muted?bgm.pause():playBGM();
-}
-
-/* Mobile autoplay fix */
-document.body.addEventListener("click",playBGM,{once:true});
-document.body.addEventListener("touchstart",playBGM,{once:true});
-
 function hideHome(){home.style.display="none";}
 function goBack(){
   document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
@@ -249,15 +203,17 @@ function goBack(){
 }
 
 function openText(el){
-  playBGM(); el.classList.add("open"); playPop();
-  hideHome(); textScreen.style.display="block";
+  el.classList.add("open");
+  hideHome();
+  textScreen.style.display="block";
   typeEffect(typeText,text1);
 }
 
 let slides,currentSlide=0;
 function openGallery(el){
-  playBGM(); el.classList.add("open"); playPop();
-  hideHome(); galleryScreen.style.display="block";
+  el.classList.add("open");
+  hideHome();
+  galleryScreen.style.display="block";
   slides=document.querySelectorAll(".slide");
   showSlide(0);
 }
@@ -265,17 +221,23 @@ function showSlide(i){
   slides.forEach(s=>s.classList.remove("active"));
   slides[i].classList.add("active");
 }
-function nextSlide(){playPop(); currentSlide=(currentSlide+1)%slides.length; showSlide(currentSlide);}
-function prevSlide(){playPop(); currentSlide=(currentSlide-1+slides.length)%slides.length; showSlide(currentSlide);}
+function nextSlide(){
+  currentSlide=(currentSlide+1)%slides.length;
+  showSlide(currentSlide);
+}
+function prevSlide(){
+  currentSlide=(currentSlide-1+slides.length)%slides.length;
+  showSlide(currentSlide);
+}
 
 function openMessage(el){
-  playBGM(); el.classList.add("open"); playPop();
-  hideHome(); messageScreen.style.display="block";
+  el.classList.add("open");
+  hideHome();
+  messageScreen.style.display="block";
   typeEffect(longText,text3);
 }
 
 function showGameClear(){
-  playPop();
   document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
   clearScreen.style.display="block";
   spawnHearts();
@@ -296,6 +258,3 @@ function spawnHearts(){
 
 </body>
 </html>
-
-
-

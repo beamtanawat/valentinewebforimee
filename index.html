@@ -144,15 +144,14 @@ button{
 <div class="screen" id="galleryScreen">
   <p>OUR MEMORIES</p>
 
-<div class="slider">
-  <img src="img1.jpg.jpg" class="slide">
-  <img src="img2.jpg.jpg" class="slide">
-  <img src="img3.jpg.jpg" class="slide">
-  <img src="img4.jpg.jpg" class="slide">
-  <img src="img5.jpg.jpg" class="slide">
-  <img src="img6.jpg.jpg" class="slide">
-</div>
-
+  <div class="slider">
+    <img src="img1.jpg.jpg" class="slide">
+    <img src="img2.jpg.jpg" class="slide">
+    <img src="img3.jpg.jpg" class="slide">
+    <img src="img4.jpg.jpg" class="slide">
+    <img src="img5.jpg.jpg" class="slide">
+    <img src="img6.jpg.jpg" class="slide">
+  </div>
 
   <div class="answers">
     <button onclick="prevSlide()">◀</button>
@@ -185,9 +184,11 @@ button{
 
 <!-- AUDIO -->
 <audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3"></audio>
-<audio id="bgm" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-177.mp3" loop></audio>
+<audio id="bgm" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-177.mp3" loop preload="auto"></audio>
 
 <script>
+let musicStarted = false;
+
 const text1="HAPPY\nVALENTINE’S DAY\nIMEE 💖";
 const text3="IMEE,\n\nThank you for every smile,\nevery moment,\nand every memory.\n\nI’m so lucky to have you.\n\n– Beam 💖";
 
@@ -207,10 +208,14 @@ function playPop(){
   p.play();
 }
 
-document.body.addEventListener("click",()=>{
+function playBGM(){
+  if(musicStarted) return;
   const bgm=document.getElementById("bgm");
-  if(bgm.paused) bgm.play();
-},{once:true});
+  bgm.volume=0.8;
+  bgm.play().then(()=>{
+    musicStarted=true;
+  }).catch(()=>{});
+}
 
 function hideHome(){home.style.display="none";}
 function goBack(){
@@ -219,6 +224,7 @@ function goBack(){
 }
 
 function openText(el){
+  playBGM();
   el.classList.add("open");
   playPop();
   hideHome();
@@ -228,6 +234,7 @@ function openText(el){
 
 let slides,currentSlide=0;
 function openGallery(el){
+  playBGM();
   el.classList.add("open");
   playPop();
   hideHome();
@@ -251,6 +258,7 @@ function prevSlide(){
 }
 
 function openMessage(el){
+  playBGM();
   el.classList.add("open");
   playPop();
   hideHome();
@@ -280,4 +288,3 @@ function spawnHearts(){
 
 </body>
 </html>
-

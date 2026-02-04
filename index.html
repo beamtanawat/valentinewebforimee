@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Game</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Press Start 2P', cursive;
+  background:#ffedf3;
+  color:#b30059;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+.game-screen{
+  width:360px;
+  max-width:92%;
+  background:#fff;
+  border:6px solid #b30059;
+  padding:25px 20px 30px;
+  text-align:center;
+  box-shadow:8px 8px 0 #ff4d88;
+}
+
+h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
+p{font-size:11px;line-height:1.8;}
+
+.envelopes{
+  display:flex;
+  justify-content:space-between;
+  margin-top:25px;
+}
+
+.envelope{
+  width:90px;
+  height:65px;
+  background:#ff4d88;
+  border:4px solid #b30059;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  animation:shake 1.6s infinite;
+  transition:.35s;
+}
+.envelope.open{
+  transform:scale(1.2) rotate(-2deg);
+}
+.envelope span{font-size:26px;}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-1px);}
+  75%{transform:translateX(1px);}
+}
+
+.screen{
+  display:none;
+  animation:openPaper .45s ease forwards;
+  transform-origin:top center;
+}
+
+@keyframes openPaper{
+  from{transform:scaleY(.3);opacity:0;}
+  to{transform:scaleY(1);opacity:1;}
+}
+
+img{
+  width:100%;
+  border:4px solid #b30059;
+  margin:10px 0;
+}
+
+button{
+  margin-top:20px;
+  padding:8px 12px;
+  font-family:'Press Start 2P';
+  font-size:10px;
+  background:#ff4d88;
+  border:3px solid #b30059;
+  color:#fff;
+  cursor:pointer;
+}
+
+.answers button{
+  margin:10px 5px;
+}
+
+.slider{overflow:hidden;}
+.slide{display:none;}
+.slide.active{display:block;}
+
+.hearts{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+.heart{
+  position:absolute;
+  bottom:-20px;
+  font-size:14px;
+  animation:floatUp 4s linear forwards;
+}
+@keyframes floatUp{
+  to{transform:translateY(-120vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-screen">
+
+<!-- HOME -->
+<div id="home">
+  <h1>
+    VALENTINE<br>
+    GAME<br><br>
+    Beam ❤️ Imee
+  </h1>
+  <p>PICK AN ENVELOPE</p>
+  <div class="envelopes">
+    <div class="envelope" onclick="openText(this)">💌</div>
+    <div class="envelope" onclick="openGallery(this)">💌</div>
+    <div class="envelope" onclick="openMessage(this)">💌</div>
+  </div>
+</div>
+
+<!-- ENVELOPE 1 -->
+<div class="screen" id="textScreen">
+  <p id="typeText"></p>
+  <button onclick="playPop(); goBack()">BACK</button>
+</div>
+
+<!-- ENVELOPE 2 -->
+<div class="screen" id="galleryScreen">
+  <p>OUR MEMORIES</p>
+
+<div class="slider">
+  <img src="images/img1.jpg.jpg" class="slide">
+  <img src="images/img2.jpg.jpg" class="slide">
+  <img src="images/img3.jpg.jpg" class="slide">
+  <img src="images/img4.jpg.jpg" class="slide">
+  <img src="images/img5.jpg.jpg" class="slide">
+  <img src="images/img6.jpg.jpg" class="slide">
+</div>
+
+
+  <div class="answers">
+    <button onclick="prevSlide()">◀</button>
+    <button onclick="nextSlide()">▶</button>
+  </div>
+
+  <button onclick="playPop(); goBack()">BACK</button>
+</div>
+
+<!-- ENVELOPE 3 -->
+<div class="screen" id="messageScreen">
+  <p id="longText"></p>
+  <p style="margin-top:20px;">Stay with me for a long time</p>
+  <div class="answers">
+    <button onclick="showGameClear()">YES</button>
+    <button onclick="showGameClear()">YES</button>
+  </div>
+</div>
+
+<!-- GAME CLEAR -->
+<div class="screen" id="clearScreen">
+  <h1>💖 GAME CLEAR 💖</h1>
+  <p>YOU UNLOCKED<br>MY HEART</p>
+  <button onclick="playPop(); goBack()">PLAY AGAIN</button>
+</div>
+
+</div>
+
+<div class="hearts" id="hearts"></div>
+
+<!-- AUDIO -->
+<audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3"></audio>
+<audio id="bgm" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-177.mp3" loop></audio>
+
+<script>
+const text1="HAPPY\nVALENTINE’S DAY\nIMEE 💖";
+const text3="IMEE,\n\nThank you for every smile,\nevery moment,\nand every memory.\n\nI’m so lucky to have you.\n\n– Beam 💖";
+
+function typeEffect(el,text,speed=45){
+  el.innerHTML="";
+  let i=0;
+  const t=setInterval(()=>{
+    el.innerHTML+=text.charAt(i).replace("\n","<br>");
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },speed);
+}
+
+function playPop(){
+  const p=document.getElementById("popSound");
+  p.currentTime=0;
+  p.play();
+}
+
+document.body.addEventListener("click",()=>{
+  const bgm=document.getElementById("bgm");
+  if(bgm.paused) bgm.play();
+},{once:true});
+
+function hideHome(){home.style.display="none";}
+function goBack(){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  home.style.display="block";
+}
+
+function openText(el){
+  el.classList.add("open");
+  playPop();
+  hideHome();
+  textScreen.style.display="block";
+  typeEffect(typeText,text1);
+}
+
+let slides,currentSlide=0;
+function openGallery(el){
+  el.classList.add("open");
+  playPop();
+  hideHome();
+  galleryScreen.style.display="block";
+  slides=document.querySelectorAll(".slide");
+  showSlide(0);
+}
+function showSlide(i){
+  slides.forEach(s=>s.classList.remove("active"));
+  slides[i].classList.add("active");
+}
+function nextSlide(){
+  playPop();
+  currentSlide=(currentSlide+1)%slides.length;
+  showSlide(currentSlide);
+}
+function prevSlide(){
+  playPop();
+  currentSlide=(currentSlide-1+slides.length)%slides.length;
+  showSlide(currentSlide);
+}
+
+function openMessage(el){
+  el.classList.add("open");
+  playPop();
+  hideHome();
+  messageScreen.style.display="block";
+  typeEffect(longText,text3);
+}
+
+function showGameClear(){
+  playPop();
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  clearScreen.style.display="block";
+  spawnHearts();
+}
+
+function spawnHearts(){
+  hearts.innerHTML="";
+  for(let i=0;i<25;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDelay=Math.random()*2+"s";
+    hearts.appendChild(h);
+  }
+}
+</script>
+
+</body>
+</html>

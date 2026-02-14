@@ -28,6 +28,7 @@ body{
   padding:25px 20px 30px;
   text-align:center;
   box-shadow:8px 8px 0 #ff4d88;
+  position: relative; /* เพิ่มคำสั่งนี้เพื่อให้ปุ่มอ้างอิงตำแหน่งจากกรอบนี้ */
 }
 
 h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
@@ -257,9 +258,10 @@ function spawnHearts(){
 // ตัวแปรเก็บขนาดของปุ่ม เริ่มต้นที่ 1 (100%)
 let noScale = 1.0;
 
-// ฟังก์ชันทำให้ปุ่ม NO ขยับหนีและเล็กลงเมื่อถูกกด
+// ฟังก์ชันทำให้ปุ่ม NO ขยับหนีอยู่ภายในกรอบและเล็กลงเมื่อถูกกด
 function moveNoBtn() {
   const btn = document.getElementById("noBtn");
+  const container = document.querySelector(".game-screen"); // อ้างอิงขนาดจากกรอบ game-screen
   
   // ลดขนาดลงทีละ 0.2 (20%)
   noScale -= 0.2;
@@ -270,21 +272,316 @@ function moveNoBtn() {
     return;
   }
   
-  // อัปเดตขนาดปุ่ม
+  // อัปเดตขนาดและกำหนดให้ตำแหน่งสัมพัทธ์กับกรอบ
   btn.style.transform = `scale(${noScale})`;
-  btn.style.position = "fixed";
-  btn.style.zIndex = "9999";
+  btn.style.position = "absolute"; 
+  btn.style.zIndex = "99";
   
-  // คำนวณพื้นที่สุ่มไม่ให้ปุ่มกระเด็นออกนอกจอ
-  const maxX = window.innerWidth - btn.offsetWidth;
-  const maxY = window.innerHeight - btn.offsetHeight;
+  // คำนวณพื้นที่สุ่มไม่ให้ปุ่มกระเด็นออกนอกกรอบสีชมพู (เผื่อขอบไว้ 20px จะได้ไม่ทับเส้น)
+  const maxX = container.clientWidth - btn.offsetWidth - 20;
+  const maxY = container.clientHeight - btn.offsetHeight - 20;
   
-  const randomX = Math.floor(Math.random() * maxX);
-  const randomY = Math.floor(Math.random() * maxY);
+  // สุ่มตำแหน่ง (+10 เพื่อให้ห่างจากขอบซ้ายและบนเล็กน้อย)
+  const randomX = Math.floor(Math.random() * maxX) + 10;
+  const randomY = Math.floor(Math.random() * maxY) + 10;
   
   btn.style.left = randomX + "px";
   btn.style.top = randomY + "px";
-  btn.style.transition = "all 0.2s ease"; // ให้การขยับและย่อขนาดดูสมูท
+  btn.style.transition = "all 0.2s ease"; 
+}
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Game</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Press Start 2P', cursive;
+  background:#ffedf3;
+  color:#b30059;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+.game-screen{
+  width:360px;
+  max-width:92%;
+  background:#fff;
+  border:6px solid #b30059;
+  padding:25px 20px 30px;
+  text-align:center;
+  box-shadow:8px 8px 0 #ff4d88;
+  position: relative; /* เพิ่มคำสั่งนี้เพื่อให้ปุ่มอ้างอิงตำแหน่งจากกรอบนี้ */
+}
+
+h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
+p{font-size:11px;line-height:1.8;}
+
+.envelopes{
+  display:flex;
+  justify-content:space-between;
+  margin-top:25px;
+}
+
+.envelope{
+  width:90px;
+  height:65px;
+  background:#ff4d88;
+  border:4px solid #b30059;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  animation:shake 1.6s infinite;
+  transition:.35s;
+}
+.envelope.open{
+  transform:scale(1.2) rotate(-2deg);
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-1px);}
+  75%{transform:translateX(1px);}
+}
+
+.screen{
+  display:none;
+  animation:openPaper .45s ease forwards;
+  transform-origin:top center;
+}
+
+@keyframes openPaper{
+  from{transform:scaleY(.3);opacity:0;}
+  to{transform:scaleY(1);opacity:1;}
+}
+
+img{
+  width:100%;
+  border:4px solid #b30059;
+  margin:10px 0;
+}
+
+button{
+  margin-top:20px;
+  padding:8px 12px;
+  font-family:'Press Start 2P';
+  font-size:10px;
+  background:#ff4d88;
+  border:3px solid #b30059;
+  color:#fff;
+  cursor:pointer;
+}
+
+.answers button{margin:10px 5px;}
+
+.slider{overflow:hidden;}
+.slide{display:none;}
+.slide.active{display:block;}
+
+.hearts{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+.heart{
+  position:absolute;
+  bottom:-20px;
+  font-size:14px;
+  animation:floatUp 4s linear forwards;
+}
+@keyframes floatUp{
+  to{transform:translateY(-120vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-screen">
+
+<div id="home">
+  <h1>
+    VALENTINE<br>
+    GAME<br><br>
+    Beam ❤️ Imee
+  </h1>
+
+  <p style="margin-top:10px;">24 Dec 2025</p>
+  
+  <p>PICK AN ENVELOPE</p>
+  <div class="envelopes">
+    <div class="envelope" onclick="openText(this)">💌</div>
+    <div class="envelope" onclick="openGallery(this)">💌</div>
+    <div class="envelope" onclick="openMessage(this)">💌</div>
+  </div>
+</div>
+
+<div class="screen" id="textScreen">
+  <p id="typeText"></p>
+  <button onclick="goBack()">BACK</button>
+</div>
+
+<div class="screen" id="galleryScreen">
+  <p>OUR MEMORIES</p>
+
+  <div class="slider">
+    <img src="img1.jpg.jpg" class="slide">
+    <img src="img2.jpg.jpg" class="slide">
+    <img src="img3.jpg.jpg" class="slide">
+    <img src="img4.jpg.jpg" class="slide">
+    <img src="img5.jpg.jpg" class="slide">
+    <img src="img6.jpg.jpg" class="slide">
+    <img src="img7.jpg.jpg" class="slide">
+    <img src="img8.jpg.jpg" class="slide">
+    <img src="img9.jpg.jpg" class="slide">
+    <img src="img10.jpg.jpg" class="slide">
+  </div>
+
+  <div class="answers">
+    <button onclick="prevSlide()">◀</button>
+    <button onclick="nextSlide()">▶</button>
+  </div>
+
+  <button onclick="goBack()">BACK</button>
+</div>
+
+<div class="screen" id="messageScreen">
+  <p id="longText"></p>
+  <p style="margin-top:20px;">Stay with me for a long time</p>
+  <div class="answers">
+    <button onclick="showGameClear()">YES</button>
+    <button id="noBtn" onclick="moveNoBtn()">NO</button>
+  </div>
+</div>
+
+<div class="screen" id="clearScreen">
+  <h1>💖 GAME CLEAR 💖</h1>
+  <p>YOU UNLOCKED<br>MY HEART</p>
+  <button onclick="goBack()">PLAY AGAIN</button>
+</div>
+
+</div>
+
+<div class="hearts" id="hearts"></div>
+
+<script>
+const text1="HAPPY\nVALENTINE’S DAY\nIMEE 💖";
+const text3="IMEE,\n\nThanks for always being there for me.\nI love you so much!\nSorry I can be a baby sometimes 🥺\n\nI want us to stay together\nfor a really long time.\n\nIf we ever fight, let's talk it out\nso we can understand each other.\nIf you are not okay with anything,\nplease tell me. I will try to be better.\n\nI've got your back,\nand I'll always cheer you on.\n\n- Beam 💖";
+
+function typeEffect(el,text,speed=45){
+  el.innerHTML="";
+  let i=0;
+  const t=setInterval(()=>{
+    el.innerHTML+=text.charAt(i).replace("\n","<br>");
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },speed);
+}
+
+function hideHome(){home.style.display="none";}
+function goBack(){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  home.style.display="block";
+}
+
+function openText(el){
+  el.classList.add("open");
+  hideHome();
+  textScreen.style.display="block";
+  typeEffect(typeText,text1);
+}
+
+let slides,currentSlide=0;
+function openGallery(el){
+  el.classList.add("open");
+  hideHome();
+  galleryScreen.style.display="block";
+  slides=document.querySelectorAll(".slide");
+  showSlide(0);
+}
+function showSlide(i){
+  slides.forEach(s=>s.classList.remove("active"));
+  slides[i].classList.add("active");
+}
+function nextSlide(){
+  currentSlide=(currentSlide+1)%slides.length;
+  showSlide(currentSlide);
+}
+function prevSlide(){
+  currentSlide=(currentSlide-1+slides.length)%slides.length;
+  showSlide(currentSlide);
+}
+
+function openMessage(el){
+  el.classList.add("open");
+  hideHome();
+  messageScreen.style.display="block";
+  typeEffect(longText,text3);
+}
+
+function showGameClear(){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  clearScreen.style.display="block";
+  spawnHearts();
+}
+
+function spawnHearts(){
+  hearts.innerHTML="";
+  for(let i=0;i<25;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDelay=Math.random()*2+"s";
+    hearts.appendChild(h);
+  }
+}
+
+// ตัวแปรเก็บขนาดของปุ่ม เริ่มต้นที่ 1 (100%)
+let noScale = 1.0;
+
+// ฟังก์ชันทำให้ปุ่ม NO ขยับหนีอยู่ภายในกรอบและเล็กลงเมื่อถูกกด
+function moveNoBtn() {
+  const btn = document.getElementById("noBtn");
+  const container = document.querySelector(".game-screen"); // อ้างอิงขนาดจากกรอบ game-screen
+  
+  // ลดขนาดลงทีละ 0.2 (20%)
+  noScale -= 0.2;
+  
+  // ถ้าขนาดเหลือน้อยกว่าหรือเท่ากับ 0 ให้ซ่อนปุ่มไปเลย
+  if (noScale <= 0.05) { 
+    btn.style.display = "none";
+    return;
+  }
+  
+  // อัปเดตขนาดและกำหนดให้ตำแหน่งสัมพัทธ์กับกรอบ
+  btn.style.transform = `scale(${noScale})`;
+  btn.style.position = "absolute"; 
+  btn.style.zIndex = "99";
+  
+  // คำนวณพื้นที่สุ่มไม่ให้ปุ่มกระเด็นออกนอกกรอบสีชมพู (เผื่อขอบไว้ 20px จะได้ไม่ทับเส้น)
+  const maxX = container.clientWidth - btn.offsetWidth - 20;
+  const maxY = container.clientHeight - btn.offsetHeight - 20;
+  
+  // สุ่มตำแหน่ง (+10 เพื่อให้ห่างจากขอบซ้ายและบนเล็กน้อย)
+  const randomX = Math.floor(Math.random() * maxX) + 10;
+  const randomY = Math.floor(Math.random() * maxY) + 10;
+  
+  btn.style.left = randomX + "px";
+  btn.style.top = randomY + "px";
+  btn.style.transition = "all 0.2s ease"; 
 }
 </script>
 

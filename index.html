@@ -28,6 +28,8 @@ body{
   padding:25px 20px 30px;
   text-align:center;
   box-shadow:8px 8px 0 #ff4d88;
+  max-height: 95vh;
+  overflow-y: auto; /* เผื่อข้อความยาวเกินจอให้เลื่อนอ่านได้ */
 }
 
 h1{font-size:14px;line-height:1.8;margin-bottom:20px;}
@@ -174,7 +176,7 @@ button{
 <div class="screen" id="clearScreen">
   <h1>💖 GAME CLEAR 💖</h1>
   <p>YOU UNLOCKED<br>MY HEART</p>
-  <button onclick="goBack()">PLAY AGAIN</button>
+  <button onclick="resetGame()">PLAY AGAIN</button>
 </div>
 
 </div>
@@ -183,19 +185,24 @@ button{
 
 <script>
 const text1="HAPPY\nVALENTINE’S DAY\nIMEE 💖";
-const text3="IMEE,\n\nThanks for always being there for me.\nI love you so much!\nSorry I can be a baby sometimes 🥺\n\nI want us to stay together\nfor a really long time.\n\nIf we ever fight, let's talk it out\nso we can understand each other.\nIf you are not okay with anything,\nplease tell me. I will try to be better.\n\nI've got your back,\nand I'll always cheer you on.\n\n- Beam 💖";
 
-function typeEffect(el,text,speed=45){
-  el.innerHTML="";
-  let i=0;
-  const t=setInterval(()=>{
-    el.innerHTML+=text.charAt(i).replace("\n","<br>");
+// จัดรูปประโยคใหม่ให้ขึ้นบรรทัดใหม่ตรงตามรูปภาพ
+const text3="IMEE,\n\nThanks for always being\nthere for me.\nI love you so much!\nSorry I can be a baby\nsometimes 🥺\n\nI want us to stay together\nfor a really long time.\n\nIf we ever fight, let's talk\nit out\nso we can understand each\nother.\nIf you are not okay with\nanything,\nplease tell me. I will try\nto be better.\n\nI've got your back,\nand I'll always cheer you\non.\n\n- Beam 💖";
+
+function typeEffect(el, text, speed=45) {
+  el.innerHTML = "";
+  let i = 0;
+  const t = setInterval(() => {
+    let char = text.charAt(i);
+    // แปลง \n เป็น <br> เพื่อให้ขึ้นบรรทัดใหม่ใน HTML
+    el.innerHTML += char === '\n' ? '<br>' : char;
     i++;
-    if(i>=text.length) clearInterval(t);
-  },speed);
+    if(i >= text.length) clearInterval(t);
+  }, speed);
 }
 
 function hideHome(){home.style.display="none";}
+
 function goBack(){
   document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
   home.style.display="block";
@@ -218,7 +225,7 @@ function openGallery(el){
 }
 function showSlide(i){
   slides.forEach(s=>s.classList.remove("active"));
-  slides[i].classList.add("active");
+  if(slides[i]) slides[i].classList.add("active");
 }
 function nextSlide(){
   currentSlide=(currentSlide+1)%slides.length;
@@ -252,6 +259,11 @@ function spawnHearts(){
     h.style.animationDelay=Math.random()*2+"s";
     hearts.appendChild(h);
   }
+}
+
+// ฟังก์ชันสำหรับ Play Again รีเฟรชหน้าเว็บใหม่หมด 100%
+function resetGame() {
+  location.reload();
 }
 
 // ตัวแปรเก็บขนาดของปุ่ม เริ่มต้นที่ 1 (100%)

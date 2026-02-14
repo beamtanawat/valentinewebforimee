@@ -116,7 +116,6 @@ button{
 
 <div class="game-screen">
 
-<!-- HOME -->
 <div id="home">
   <h1>
     VALENTINE<br>
@@ -134,13 +133,11 @@ button{
   </div>
 </div>
 
-<!-- ENVELOPE 1 -->
 <div class="screen" id="textScreen">
   <p id="typeText"></p>
   <button onclick="goBack()">BACK</button>
 </div>
 
-<!-- ENVELOPE 2 -->
 <div class="screen" id="galleryScreen">
   <p>OUR MEMORIES</p>
 
@@ -165,17 +162,15 @@ button{
   <button onclick="goBack()">BACK</button>
 </div>
 
-<!-- ENVELOPE 3 -->
 <div class="screen" id="messageScreen">
   <p id="longText"></p>
   <p style="margin-top:20px;">Stay with me for a long time</p>
   <div class="answers">
     <button onclick="showGameClear()">YES</button>
-    <button onclick="showGameClear()">YES</button>
+    <button id="noBtn" onmouseover="moveNoBtn()" ontouchstart="moveNoBtn()">NO</button>
   </div>
 </div>
 
-<!-- GAME CLEAR -->
 <div class="screen" id="clearScreen">
   <h1>💖 GAME CLEAR 💖</h1>
   <p>YOU UNLOCKED<br>MY HEART</p>
@@ -258,11 +253,24 @@ function spawnHearts(){
     hearts.appendChild(h);
   }
 }
-</script>
+
+// ฟังก์ชันทำให้ปุ่ม NO ขยับหนีเวลาเอาเมาส์ชี้ หรือ เอานิ้วแตะ
+function moveNoBtn() {
+  const btn = document.getElementById("noBtn");
+  btn.style.position = "absolute";
   
+  // คำนวณพื้นที่สุ่มไม่ให้ปุ่มกระเด็นออกนอกจอ
+  const maxX = window.innerWidth - btn.offsetWidth;
+  const maxY = window.innerHeight - btn.offsetHeight;
+  
+  const randomX = Math.floor(Math.random() * maxX);
+  const randomY = Math.floor(Math.random() * maxY);
+  
+  btn.style.left = randomX + "px";
+  btn.style.top = randomY + "px";
+  btn.style.transition = "0.2s"; // ให้ปุ่มลอยหนีแบบสมูทขึ้นนิดนึง
+}
+</script>
+
 </body>
 </html>
-
-
-
-
